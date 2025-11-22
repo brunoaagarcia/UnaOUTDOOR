@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../auth-folder/auth.service';
+import { AuthService } from '../service/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ThemeService } from '../auth-folder/theme.service';
+import { ThemeService } from '../service/theme.service';
 
 @Component({
   selector: 'app-password-recovery',

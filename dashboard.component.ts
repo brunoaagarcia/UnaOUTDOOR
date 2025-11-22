@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ThemeService } from './src/app/auth-folder/theme.service';
+import { ThemeService } from './src/app/service/theme.service';
 
 @Component({
   selector: 'app-dashboard',
