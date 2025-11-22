@@ -1,74 +1,35 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, from, throwError } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import {
   createClient,
   SupabaseClient,
-  Session,
-  AuthChangeEvent,
-  User,
 } from '@supabase/supabase-js';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 
 /**
  * Serviço de autenticação usando Supabase Auth (client-side).
- * Injetar em componentes via constructor: constructor(private auth: AuthService) {}
  */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private router = inject(Router);
   private supabase: SupabaseClient;
-  private supabaseAdmin: SupabaseClient;
+
+  // REMOVIDO: private supabaseAdmin (Não seguro no front-end)
 
   constructor() {
+    // Apenas o cliente público (seguro)
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
-    this.supabaseAdmin = createClient(environment.supabaseUrl, environment.supabaseServiceRoleKey);
   }
 
-  /**
-   * Atualiza a senha de um usuário usando o CPF.
-   * Este método requer privilégios de administrador (service_role).
-   */
-  async updatePasswordByCpf(cpf: string, newPassword: string) {
-    // 1. Encontrar o user_id do cliente pelo CPF
-    const { data: cliente, error: findError } = await this.supabaseAdmin
-      .from('clientes')
-      .select('user_id')
-      .eq('cpf', cpf)
-      .single();
-
-    if (findError) {
-      console.error('Erro ao buscar cliente pelo CPF:', findError);
-      throw new Error('Cliente não encontrado ou erro na busca.');
-    }
-
-    if (!cliente) {
-      throw new Error('Nenhum cliente encontrado com o CPF fornecido.');
-    }
-
-    const userId = cliente.user_id;
-
-    // 2. Atualizar a senha do usuário usando o user_id
-    const { data, error: updateError } = await this.supabaseAdmin.auth.admin.updateUserById(
-      userId,
-      { password: newPassword }
-    );
-
-    if (updateError) {
-      console.error('Erro ao atualizar a senha do usuário:', updateError);
-      throw new Error('Não foi possível atualizar a senha.');
-    }
-
-    return { data, error: null };
-  }
+  /* REMOVIDO: updatePasswordByCpf 
+     Motivo: Dependia da chave de serviço (admin) que removemos por segurança.
+     Futuramente, isso deve ser feito via Supabase Edge Function.
+  */
 
   /**
    * Registra um NOVO CLIENTE.
-   * Este método utiliza o Supabase Auth para criar o login do usuário (email/senha) 
-   * e, crucialmente, anexa os dados do perfil (nome, cpf, telefone) 
-   * dentro das 'options.data', junto com a flag 'role: cliente'.
-   * O Trigger do banco de dados (Passo 4) usará esta 'role' para criar o perfil na tabela 'clientes'.
    */
   async signUpCliente(dadosCadastro: { email: string, password: string, nome: string, cpf: string, telefone: string }) {
     const { email, password, nome, cpf, telefone } = dadosCadastro;
@@ -77,7 +38,6 @@ export class AuthService {
       email: email,
       password: password,
       options: {
-        // Metadados que serão gravados no auth.users e lidos pela nossa função SQL
         data: {
           role: 'cliente',
           nome: nome,
@@ -89,16 +49,14 @@ export class AuthService {
   }
 
   /**
-   * Realiza login com email e senha (client-side, usa anon key).
-   * Retorna a resposta do Supabase (data/error).
+   * Realiza login com email e senha.
    */
   async signIn(email: string, password: string) {
     return this.supabase.auth.signInWithPassword({ email, password });
   }
 
   /**
-   * Realiza login de cliente com email e senha.
-   * Retorna um Observable com o resultado da autenticação.
+   * Realiza login de cliente com verificação de tabela.
    */
   customerLogin(email: string, password: string) {
     return new Observable<any>((observer) => {
@@ -109,7 +67,7 @@ export class AuthService {
         if (error) {
           observer.error(error);
         } else {
-          // Verifica se o usuário é um cliente
+          // Verifica se o usuário é um cliente na tabela pública
           this.supabase
             .from('clientes')
             .select('*')
@@ -117,6 +75,7 @@ export class AuthService {
             .single()
             .then(({ data: customerData, error: customerError }) => {
               if (customerError || !customerData) {
+                // Se logou no Auth mas não tem perfil de cliente
                 observer.error(new Error('Usuário não é um cliente'));
               } else {
                 observer.next(data);
@@ -136,9 +95,6 @@ export class AuthService {
     return result;
   }
 
-  /**
-   * Recupera a sessão atual (se houver).
-   */
   async getSession() {
     return this.supabase.auth.getSession();
   }
@@ -159,38 +115,6 @@ export class AuthService {
               phone
             }
           ]));
-      })
-    );
-  }
-
-  /**
-   * Registra um cliente e tenta efetuar login automaticamente.
-   * Retorna o resultado do login ou um erro.
-   */
-  registerAndLogin(name: string, email: string, password: string, phone: string): Observable<any> {
-    // 1) faz signUp
-    // 2) insere na tabela customers
-    // 3) realiza signInWithPassword para garantir sessão ativa
-    return from(this.supabase.auth.signUp({ email, password })).pipe(
-      switchMap(({ data, error }) => {
-        if (error) throw error;
-
-        const userId = data.user?.id;
-
-        // insere registro na tabela clientes
-        return from(this.supabase
-          .from('clientes')
-          .insert([
-            {
-              user_id: userId,
-              name,
-              email,
-              phone
-            }
-          ])).pipe(
-            // depois de inserir, tenta logar para criar sessão
-            switchMap(() => from(this.supabase.auth.signInWithPassword({ email, password })))
-          );
       })
     );
   }
@@ -221,12 +145,12 @@ export class AuthService {
         if (!user) throw new Error('Usuário não autenticado');
 
         return from(this.supabase
-          .from('orders')
+          .from('pedidos') // Ajustei para 'pedidos' (provável nome da sua tabela) se for 'orders' pode mudar
           .select(`
             *,
-            items:order_items(*)
-          `)
-          .eq('customer_id', user.id)
+            items:item_pedido(*) 
+          `) // Ajustei para item_pedido baseado no seu schema anterior
+          .eq('user_id', user.id) // Ajustei para user_id (padrão do seu schema)
           .order('created_at', { ascending: false }));
       }),
       map(({ data, error }) => {
@@ -236,23 +160,14 @@ export class AuthService {
     );
   }
 
+  // Métodos de recuperação de senha padrão (seguros)
   resetPassword(email: string): Observable<any> {
     return from(this.supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     }));
   }
 
-  verifyResetCode(email: string, code: string): Observable<any> {
-    return from(this.supabase.auth.verifyOtp({
-      email,
-      token: code,
-      type: 'recovery'
-    }));
-  }
-
-  updatePassword(email: string, code: string, newPassword: string): Observable<any> {
-    return this.verifyResetCode(email, code).pipe(
-      switchMap(() => from(this.supabase.auth.updateUser({ password: newPassword })))
-    );
+  updatePassword(newPassword: string): Observable<any> {
+    return from(this.supabase.auth.updateUser({ password: newPassword }));
   }
 }
