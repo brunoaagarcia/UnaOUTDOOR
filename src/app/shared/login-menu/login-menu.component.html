@@ -1,0 +1,19 @@
+<div class="login-wrapper">
+
+      <div class="dropdown-col">
+        <h4>Entrar como Administrador</h4>
+        <form (ngSubmit)="submitAdmin()">
+          <input type="email" placeholder="Email" [(ngModel)]="adminEmail" name="adminEmail" required />
+          <input type="password" placeholder="Senha" [(ngModel)]="adminPassword" name="adminPassword" required />
+          <button type="button" (click)="submitAdmin()" [disabled]="adminLoading">{{ adminLoading ? 'Entrando...' : 'Entrar' }}</button>
+          <div class="error" *ngIf="adminError">{{ adminError }}</div>
+        </form>
+      </div>
+    </div>
+
+    <div class="dropdown-footer">
+      <a routerLink="/customer-register" (click)="close()">Criar conta</a>
+      <a routerLink="/password-recovery" (click)="close()">Esqueci minha senha</a>
+    </div>
+  </div>
+</div>

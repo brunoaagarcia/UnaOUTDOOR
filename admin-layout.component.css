@@ -1,0 +1,83 @@
+:host {
+  /* Tema Claro (Padrão) */
+  --bg: #f4f6f8;
+  --card-bg: #ffffff;
+  --text: #212529;
+  --primary: #ffc107;
+  --secondary: #ffca2c;
+  --border-color: #dee2e6;
+  --input-bg: #ffffff;
+}
+
+/* Tema Escuro */
+:host-context(.theme-dark) {
+  --bg: #000000;
+  --card-bg: #0f0f0f;
+  --text: #ffffff;
+  --primary: #ffd400;
+  --secondary: #ffea66;
+  --border-color: #444;
+  --input-bg: #1a1a1a;
+}
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: var(--bg);
+}
+
+.admin-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  height: 60px;
+  background-color: var(--card-bg);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+}
+
+.logo {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.admin-header nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.admin-header nav a {
+  text-decoration: none;
+  color: var(--text);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.admin-header nav a:hover,
+.admin-header nav a.active,
+.logout-link:hover {
+  background-color: var(--primary);
+  color: #000;
+}
+
+.admin-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 20px;
+}

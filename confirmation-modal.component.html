@@ -1,0 +1,11 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="cancel.emit()" [class.visible]="isOpen">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h2 class="modal-title">Confirmação</h2>
+    <p>{{ message }}</p>
+    <div class="modal-actions">
+      <button type="button" class="btn-secondary" (click)="cancel.emit()">Cancelar</button>
+      <button type="button" class="btn-danger" (click)="onConfirm()">Excluir</button>
+    </div>
+    <button class="close-button" (click)="cancel.emit()">×</button>
+  </div>
+</div>

@@ -1,0 +1,82 @@
+<div class="budget-container">
+  <div class="header">
+    <h2>Solicite seu Orçamento</h2>
+    <p>Preencha o formulário abaixo e nossa equipe entrará em contato o mais breve possível.</p>
+  </div>
+
+  <div class="info-message" *ngIf="!submissionSuccess">
+    <i class="fas fa-info-circle"></i>
+    <span>Lembrete: O cliente deve realizar o pagamento de 50% do valor total antecipadamente para iniciar a produção.</span>
+  </div>
+
+  <form #budgetForm="ngForm" (ngSubmit)="onSubmit(budgetForm)" *ngIf="!submissionSuccess">
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="customerName">Seu Nome</label>
+        <input type="text" id="customerName" [(ngModel)]="model.customerName" name="customerName" required #customerNameInput="ngModel" [class.is-invalid]="customerNameInput.invalid && formSubmitted" />
+        <div *ngIf="customerNameInput.invalid && formSubmitted" class="field-error-message">
+          Seu nome é obrigatório.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="customerDocument">CPF / CNPJ</label>
+        <input type="text" id="customerDocument" [(ngModel)]="model.customerDocument" name="customerDocument" required (input)="formatDocument($event)" #customerDocumentInp #customerDocumentInput="ngModel" [class.is-invalid]="customerDocumentInput.invalid && formSubmitted" maxlength="18" />
+        <div *ngIf="customerDocumentInput.invalid && formSubmitted" class="field-error-message">
+          CPF/CNPJ é obrigatório.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="customerPhone">Telefone / WhatsApp</label>
+        <input type="tel" id="customerPhone" [(ngModel)]="model.customerPhone" name="customerPhone" required #customerPhoneInput="ngModel" [class.is-invalid]="customerPhoneInput.invalid && formSubmitted" />
+        <div *ngIf="customerPhoneInput.invalid && formSubmitted" class="field-error-message">
+          Seu telefone é obrigatório.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="customerEmail">Email</label>
+        <input type="email" id="customerEmail" [(ngModel)]="model.customerEmail" name="customerEmail" />
+      </div>
+
+      <div class="form-group">
+        <label for="serviceName">Serviço de Interesse</label>
+        <select id="serviceName" [(ngModel)]="model.serviceName" name="serviceName" required #serviceNameInput="ngModel" [class.is-invalid]="serviceNameInput.invalid && formSubmitted">
+          <option value="" disabled>Selecione um serviço</option>
+          <option *ngFor="let service of services" [value]="service">{{ service }}</option>
+        </select>
+        <div *ngIf="serviceNameInput.invalid && formSubmitted" class="field-error-message">
+          Selecione um serviço.
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group form-group-full">
+      <label for="description">Descreva o que você precisa (inclua medidas, se souber)</label>
+      <textarea id="description" [(ngModel)]="model.description" name="description" rows="4" placeholder="Ex: Preciso de um outdoor de 9x3m para a campanha do Dia das Mães..."></textarea>
+    </div>
+
+    <div *ngIf="formSubmitted && budgetForm.invalid" class="form-error-message">
+      {{ submissionMessage }}
+    </div>
+
+    <!-- Mensagem de erro para falhas de submissão (ex: erro de rede/backend) -->
+    <div *ngIf="formSubmitted && !submissionSuccess && !budgetForm.invalid && submissionMessage" class="form-error-message">
+      {{ submissionMessage }}
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="submit-btn">Enviar Pedido de Orçamento</button>
+    </div>
+  </form>
+
+  <div *ngIf="submissionSuccess" class="submission-feedback success">
+    <h3>{{ submissionTitle }}</h3>
+    <p>{{ submissionMessage }}</p>
+    <button (click)="submissionSuccess = false; formSubmitted = false" class="submit-btn btn-outline">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      Fazer um novo orçamento
+    </button>
+  </div>
+</div>

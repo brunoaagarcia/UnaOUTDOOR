@@ -1,0 +1,59 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1>Área do Cliente</h1>
+    <button class="logout-button" (click)="onLogout()">Sair</button>
+  </header>
+
+  <div class="dashboard-content" *ngIf="!loading; else loadingTemplate">
+    <div class="error-message" *ngIf="error">{{ error }}</div>
+
+    <!-- Customer Info Card -->
+    <div class="info-card" *ngIf="customerData">
+      <h2>Seus Dados</h2>
+      <div class="customer-info">
+        <p><strong>Nome:</strong> {{ customerData.name }}</p>
+        <p><strong>Email:</strong> {{ customerData.email }}</p>
+        <p><strong>Telefone:</strong> {{ customerData.phone }}</p>
+      </div>
+    </div>
+
+    <!-- Orders Section -->
+    <div class="orders-section">
+      <h2>Seus Pedidos</h2>
+      
+      <div class="orders-list" *ngIf="orders.length > 0; else noOrders">
+        <div class="order-card" *ngFor="let order of orders">
+          <div class="order-header">
+            <span class="order-number">Pedido #{{ order.id }}</span>
+            <span class="order-date">{{ order.created_at | date:'dd/MM/yyyy' }}</span>
+          </div>
+          
+          <div class="order-details">
+            <p><strong>Status:</strong> {{ order.status }}</p>
+            <p><strong>Valor Total:</strong> R$ {{ order.total_price | number:'1.2-2' }}</p>
+          </div>
+          
+          <div class="order-items">
+            <h3>Itens do Pedido</h3>
+            <ul>
+              <li *ngFor="let item of order.items">
+                {{ item.quantity }}x {{ item.product_name }} - R$ {{ item.price | number:'1.2-2' }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <ng-template #noOrders>
+        <p class="no-orders-message">Você ainda não tem pedidos realizados.</p>
+      </ng-template>
+    </div>
+  </div>
+
+  <ng-template #loadingTemplate>
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Carregando...</p>
+    </div>
+  </ng-template>
+</div>

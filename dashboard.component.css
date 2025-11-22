@@ -1,0 +1,121 @@
+.dashboard-container {
+  padding: 20px;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+}
+.theme-toggle {
+  position: absolute;
+  top: 80px; /* Ajuste para não sobrepor o header */
+  right: 40px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  color: var(--primary);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-container h2 {
+  font-size: 2rem;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.dashboard-container p {
+  font-size: 1.1rem;
+  color: var(--text);
+  margin-bottom: 40px;
+}
+
+/* Estilo para o título e subtítulo no modo escuro */
+.theme-dark .dashboard-container h2,
+.theme-dark .dashboard-container p {
+  color: var(--primary); /* Amarelo no modo escuro */
+}
+
+.dashboard-cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.stat-card {
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+
+.stat-card.large {
+  grid-column: 1 / -1;
+  background-color: var(--primary);
+  border-color: var(--secondary);
+}
+
+.stat-value {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 5px;
+}
+
+.stat-card.large .stat-value {
+  font-size: 2.5rem;
+  color: #000; /* Texto preto no card amarelo */
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.stat-card.large .stat-label {
+  color: #000; /* Texto preto no card amarelo */
+}
+.dashboard-card {
+  background-color: var(--primary); /* Fundo amarelo para os cards */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+  width: 280px;
+  text-align: center;
+  text-decoration: none;
+  color: #000; /* Texto preto para os cards */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid var(--secondary);
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  background-color: var(--secondary);
+}
+
+.card-icon {
+  color: #000; /* Ícones pretos */
+}
+
+.dashboard-card h3,
+.dashboard-card p {
+  color: #000; /* Garante que todo o texto e ícone sejam pretos */
+}

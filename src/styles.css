@@ -1,0 +1,50 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: var(--bg, #f0f2f5);
+  color: var(--text, #222);
+  transition: background-color 250ms ease, color 250ms ease;
+}
+
+/* Theme variables: light (branco e roxo) and dark (preto e amarelo) */
+body.theme-light {
+  --bg: #ffffff;
+  --text: #2b2b2b;
+  --primary: #6a2fb5; /* roxo */
+  --secondary: #5a2ca8;
+  --accent: #6a2fb5;
+  --card-bg: #ffffff;
+  --hero-overlay: rgba(0,0,0,0.45);
+  --admin-bg: #6a2fb5;
+}
+
+body.theme-dark {
+  --bg: #000000;
+  --text: #ffffff;
+  --primary: #ffd400; /* amarelo */
+  --secondary: #ffea66;
+  --accent: #ffd400;
+  --card-bg: #0f0f0f;
+  --hero-overlay: rgba(0,0,0,0.6);
+  --admin-bg: #ffd400;
+}
+
+/* Button hover animation variables */
+:root {
+  --btn-hover-translate: -4px;
+  --btn-hover-scale: 1.02;
+  --btn-hover-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* Small utility to ensure theme class exists on first load */
+html body:not(.theme-light):not(.theme-dark) {
+  /* default to light */
+  --bg: #ffffff;
+  --text: #2b2b2b;
+  --primary: #6a2fb5;
+  --card-bg: #ffffff;
+}

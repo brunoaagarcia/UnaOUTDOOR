@@ -1,0 +1,289 @@
+<div class="order-management-container">
+  <div class="page-navigation">
+    <a routerLink="/admin" class="back-btn">&larr; Voltar ao Dashboard</a>
+  </div>
+  <div class="header">
+    <h2>Gerenciamento de Pedidos</h2>
+    <button class="add-btn" (click)="openAddModal()">Adicionar Pedido</button>
+  </div>
+  <app-add-order-modal
+    [isOpen]="isModalOpen"
+    [orderToEdit]="currentOrder"
+    (closeModal)="isModalOpen = false"
+    (orderSubmit)="handleOrderSubmit($event)"></app-add-order-modal>
+  <app-confirmation-modal
+    [isOpen]="isConfirmModalOpen"
+    [message]="confirmMessage"
+    (confirm)="confirmDelete()"
+    (cancel)="closeConfirmModal()">
+  </app-confirmation-modal>
+
+  <div class="order-list">
+    <h3>Pedidos Existentes</h3>
+<style>
+.order-management-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 40px auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h2,
+h3 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.page-navigation {
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.back-btn:hover {
+  background-color: #e9ecef;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+}
+
+.add-btn {
+  padding: 10px 15px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.add-btn:hover {
+  background-color: #218838;
+}
+
+.order-list h3 {
+  text-align: left;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.filter-container {
+  margin-bottom: 20px;
+}
+
+.filter-input {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: #28a745;
+  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);
+}
+
+.table-container {
+  overflow-x: auto;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.order-table th,
+.order-table td {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+
+.order-table td:nth-child(1),
+.order-table td:nth-child(2),
+.order-table td:nth-child(3),
+.order-table td:nth-child(4),
+.order-table td:nth-child(5),
+.order-table td:nth-child(6) span,
+.order-table td:nth-child(7),
+.order-table td:nth-child(8),
+.order-table td:nth-child(9) {
+  color: black !important; 
+}
+
+
+.order-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.order-table tbody tr:hover {
+  background-color: #f1f3f5;
+}
+
+.actions-cell {
+  white-space: nowrap;
+  width: 1%;
+  text-align: right;
+}
+
+.action-btn {
+  padding: 6px 12px;
+  margin-left: 6px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-btn {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.receipt-btn {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.action-btn:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.status {
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  display: inline-block;
+  min-width: 95px;
+  text-transform: capitalize;
+}
+
+.status-pendente {
+  background-color: #ffc107;
+  color: #333;
+}
+.status-em-processo {
+  background-color: #17a2b8;
+}
+.status-finalizado {
+  background-color: #28a745;
+}
+
+.pago-sim {
+  color: #28a745;
+}
+
+.pago-nao {
+  color: #dc3545;
+}
+</style>
+    <div class="filter-container">
+      <input
+        type="text"
+        class="filter-input"
+        placeholder="Buscar por nome ou CPF do cliente..."
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="filterOrders()" />
+    </div>
+
+    <p *ngIf="filteredOrders.length === 0">Nenhum pedido encontrado.</p>
+
+    <div class="table-container" *ngIf="filteredOrders.length > 0">
+      <table class="order-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>CPF</th>
+            <th>Serviço</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Pago</th>
+            <th>Forma Pagamento</th>
+            <th>Data</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of filteredOrders">
+            <td>#{{ order.formattedDisplayId }}</td>
+            <td>{{ order.customerName }}</td>
+            <td>{{ order.customerDocument }}</td>
+            <td>{{ order.serviceName }}</td>
+            <td>{{ order.totalPrice | currency:'BRL' }}</td>
+            <td><span class="status status-{{ order.status.toLowerCase().replace(' ', '-') }}">{{ order.status }}</span></td>
+            <td>
+              <span [class.pago-sim]="order.pago" [class.pago-nao]="!order.pago">
+                {{ order.pago ? 'Sim' : 'Não' }}
+              </span>
+            </td>
+            <td>
+              <ng-container *ngIf="order.pago">
+                {{ order.formaPagamento }}
+                <span *ngIf="order.formaPagamento === 'Parcelado' && order.installments">
+                  ({{ order.installments }}x)
+                </span>
+              </ng-container>
+            </td>
+            <td>{{ order.orderDate | date:'dd/MM/yy' }}</td>
+            <td class="actions-cell">
+              <button class="action-btn edit-btn" (click)="openEditModal(order)">Editar</button>
+              <button class="action-btn delete-btn" (click)="openDeleteConfirmModal(order)">Excluir</button>
+              <button class="action-btn receipt-btn" (click)="generateReceipt(order)">Comprov.</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

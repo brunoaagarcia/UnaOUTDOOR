@@ -1,0 +1,95 @@
+<div class="reports-container">
+  <div class="page-navigation">
+    <a routerLink="/admin" class="back-btn">&larr; Voltar ao Dashboard</a>
+  </div>
+  <div class="header">
+    <h2>{{ reportPeriodTitle }}</h2>
+    <div class="controls">
+      <div class="date-selector">
+        <select [(ngModel)]="selectedMonth" (ngModelChange)="onDateChange()">
+          <option *ngFor="let monthName of monthNames; let i = index" [value]="i">
+            {{ monthName }}
+          </option>
+        </select>
+        <select [(ngModel)]="selectedYear" (ngModelChange)="onDateChange()">
+          <option *ngFor="let year of availableYears" [value]="year">
+            {{ year }}
+          </option>
+        </select>
+      </div>
+      <button class="all-time-btn" (click)="showAllTimeStats()">Ver Todos</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card total">
+      <div class="stat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+      </div>
+      <div class="stat-value">{{ stats.totalOrders }}</div>
+      <div class="stat-label">Total de Pedidos</div>
+    </div>
+    <div class="stat-card pending">
+      <div class="stat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      </div>
+      <div class="stat-value">{{ stats.pendingCount }}</div>
+      <div class="stat-label">Pedidos Pendentes</div>
+    </div>
+    <div class="stat-card in-process">
+      <div class="stat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+      </div>
+      <div class="stat-value">{{ stats.inProcessCount }}</div>
+      <div class="stat-label">Pedidos em Processo</div>
+    </div>
+    <div class="stat-card finished">
+      <div class="stat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+      </div>
+      <div class="stat-value">{{ stats.finishedCount }}</div>
+      <div class="stat-label">Pedidos Finalizados</div>
+    </div>
+  </div>
+
+  <div class="financial-summary">
+    <div class="stat-card large financial" *ngIf="stats.totalOrders > 0">
+      <div class="stat-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+      </div>
+      <div class="stat-value">{{ stats.totalValue | currency:'BRL' }}</div>
+      <div class="stat-label">Valor Total dos Pedidos</div>
+    </div>
+    <div class="no-data" *ngIf="stats.totalOrders === 0">
+      Nenhum dado encontrado para o período selecionado.
+    </div>
+  </div>
+
+  <div class="history-accordion">
+    <button class="accordion-header" (click)="isHistoryVisible = !isHistoryVisible">
+      <h3>Histórico de Relatórios</h3>
+      <span class="accordion-icon">{{ isHistoryVisible ? '−' : '+' }}</span>
+    </button>
+    <div class="accordion-content" [class.visible]="isHistoryVisible">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Período</th>
+            <th>Total Pedidos</th>
+            <th>Faturamento</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let report of monthlyHistory">
+            <td>{{ getMonthName(report.month) }} / {{ report.year }}</td>
+            <td>{{ report.stats.totalOrders }}</td>
+            <td>{{ report.stats.totalValue | currency:'BRL' }}</td>
+          </tr>
+          <tr *ngIf="monthlyHistory.length === 0">
+            <td colspan="3">Nenhum histórico de pedidos para exibir.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

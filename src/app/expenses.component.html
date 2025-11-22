@@ -1,0 +1,85 @@
+<div class="expenses-container">
+  <div class="page-navigation">
+    <a routerLink="/admin" class="back-btn">&larr; Voltar ao Dashboard</a>
+  </div>
+  <div class="header">
+    <h2>Gerenciamento de Despesas</h2>
+    <button class="add-btn" (click)="openAddModal()">Adicionar Despesa</button>
+  </div>
+
+  <!-- Modal para Adicionar/Editar -->
+  <app-expense-modal
+    [isOpen]="isModalOpen"
+    [expenseToEdit]="currentExpense"
+    (closeModal)="isModalOpen = false"
+    (expenseSubmit)="handleExpenseSubmit($event)">
+  </app-expense-modal>
+
+  <!-- Modal de Confirmação para Excluir -->
+  <app-confirmation-modal
+    [isOpen]="isConfirmModalOpen"
+    [message]="confirmMessage"
+    (confirm)="confirmDelete()"
+    (cancel)="closeConfirmModal()">
+  </app-confirmation-modal>
+
+  <div class="table-container">
+    <div class="table-section">
+      <h3>Despesas Recentes</h3>
+
+      <div class="filters-toolbar">
+        <div class="filter-group">
+          <label>Período:</label>
+          <div class="filter-controls">
+            <button (click)="setFilter('all')" [class.active]="currentFilter === 'all'">Tudo</button>
+            <button (click)="setFilter('7')" [class.active]="currentFilter === '7'">7d</button>
+            <button (click)="setFilter('30')" [class.active]="currentFilter === '30'">30d</button>
+            <button (click)="setFilter('60')" [class.active]="currentFilter === '60'">60d</button>
+          </div>
+        </div>
+        <div class="filter-group">
+          <label>Mês Específico:</label>
+          <div class="month-filter-controls">
+            <select name="selectedMonth" [(ngModel)]="selectedMonth" (ngModelChange)="setFilter('month')">
+              <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
+            </select>
+            <select name="selectedYear" [(ngModel)]="selectedYear" (ngModelChange)="setFilter('month')">
+              <option *ngFor="let year of availableYears" [value]="year">{{ year }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <table class="expenses-table">
+        <thead>
+          <tr>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Data</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let expense of filteredExpenses">
+            <td>{{ expense.description }}</td> 
+            <td>{{ expense.amount | currency:'BRL' }}</td>
+            <td>{{ expense.date | date:'dd/MM/yyyy' }}</td>
+            <td class="actions-cell">
+              <button class="action-btn edit-btn" (click)="openEditModal(expense)">Editar</button>
+              <button class="action-btn delete-btn" (click)="openDeleteConfirmModal(expense)">Excluir</button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredExpenses.length === 0">
+            <td colspan="4" class="no-data">Nenhuma despesa encontrada para este período.</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td class="total-label">Total</td>
+            <td class="total-amount" colspan="3">{{ totalAmount | currency:'BRL' }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,127 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="onClose()" [class.visible]="isOpen">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h2>{{ isEditMode ? 'Editar Pedido' : 'Adicionar Novo Pedido' }}</h2>
+    <!-- Mensagem de lembrete sobre o pagamento -->
+    <div *ngIf="!isEditMode" class="info-message">
+      <i class="fas fa-info-circle"></i>
+      <span>Lembrete: O cliente deve realizar o pagamento de 50% do valor total antecipadamente para iniciar a produção.</span>
+    </div>
+    <form #orderForm="ngForm" (ngSubmit)="onSubmit(orderForm)">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="customerName">Nome do Cliente</label>
+          <input type="text" id="customerName" [(ngModel)]="model.customerName" name="customerName" required #customerNameInput="ngModel" [class.is-invalid]="customerNameInput.invalid && formSubmitted" />
+          <div *ngIf="customerNameInput.invalid && formSubmitted" class="field-error-message">
+            O nome do cliente é obrigatório.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="customerDocument">CPF</label>
+          <input type="text" id="customerDocument" [(ngModel)]="model.customerDocument" name="customerDocument" required />
+        </div>
+        <div class="form-group">
+          <label for="customerPhone">Telefone</label>
+          <input type="tel" id="customerPhone" [(ngModel)]="model.customerPhone" name="customerPhone" />
+        </div>
+        <div class="form-group">
+          <label for="customerEmail">Email</label>
+          <input type="email" id="customerEmail" [(ngModel)]="model.customerEmail" name="customerEmail" />
+        </div>
+        <div class="form-group">
+          <label for="serviceName">Serviço</label>
+          <select id="serviceName" [(ngModel)]="model.serviceName" name="serviceName" required>
+            <option value="" disabled>Selecione um serviço</option>
+            <option *ngFor="let service of services" [value]="service">{{ service }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="totalPrice">Preço Total</label>
+          <div class="input-group">
+            <span class="input-group-text">R$</span>
+            <input type="number" id="totalPrice" [(ngModel)]="model.totalPrice" name="totalPrice" required min="0" step="0.01" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Campos de Dimensões -->
+      <h3 class="form-section-header">Dimensões (Opcional)</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="height">Altura (m)</label>
+          <input type="number" id="height" [(ngModel)]="model.height" name="height" min="0" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label for="width">Largura (m)</label>
+          <input type="number" id="width" [(ngModel)]="model.width" name="width" min="0" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label for="length">Comprimento (m)</label>
+          <input type="number" id="length" [(ngModel)]="model.length" name="length" min="0" step="0.01" />
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="status">Status</label>
+          <select id="status" [(ngModel)]="model.status" name="status" required>
+            <option *ngIf="isEditMode && initialStatus === 'Orçamento'" value="Orçamento">Orçamento</option>
+            <option value="Pendente">Pendente</option>
+            <option value="Em Processo">Em Processo</option>
+            <option value="Finalizado">Finalizado</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group pago-group">
+        <label>Pago</label>
+        <div class="switch-container">
+          <label class="switch">
+            <input type="checkbox" id="pago" [(ngModel)]="model.pago" name="pago">
+            <span class="slider round"></span>
+          </label>
+          <span class="switch-label">{{ model.pago ? 'Sim' : 'Não' }}</span>
+        </div>
+      </div>
+
+      <div *ngIf="model.pago" class="form-group">
+        <label>Forma de Pagamento</label>
+        <div class="radio-group">
+          <label>
+            <input type="radio" name="formaPagamento" value="À vista" [(ngModel)]="model.formaPagamento" (change)="onPaymentMethodChange()">
+            À vista
+          </label>
+          <label>
+            <input type="radio" name="formaPagamento" value="Parcelado" [(ngModel)]="model.formaPagamento" (change)="onPaymentMethodChange()">
+            Parcelado
+          </label>
+        </div>
+        <div *ngIf="model.formaPagamento === 'Parcelado'" class="form-group-inline" style="margin-top: 10px;">
+          <label for="installments" style="margin-right: 10px;">Número de Parcelas</label>
+          <select id="installments" [(ngModel)]="model.installments" name="installments" required>
+            <option [ngValue]="undefined" disabled>Selecione</option>
+            <option [ngValue]="3">3x</option>
+            <option [ngValue]="6">6x</option>
+            <option [ngValue]="12">12x</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Campo de Descrição -->
+      <div class="form-group form-group-full">
+        <label for="description">Descrição / Comentários</label>
+        <textarea id="description" [(ngModel)]="model.description" name="description" rows="3"></textarea>
+      </div>
+
+      <!-- Mensagem de erro de validação -->
+      <div *ngIf="formSubmitted && orderForm.invalid" class="form-error-message">
+        Por favor, preencha todos os campos obrigatórios.
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="onClose()">Cancelar</button>
+        <button type="submit" class="btn-primary">{{ isEditMode ? 'Salvar Alterações' : 'Adicionar Pedido' }}</button>
+      </div>
+    </form>
+    <button class="close-button" (click)="onClose()">×</button>
+  </div>
+</div>

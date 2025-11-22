@@ -1,0 +1,168 @@
+<div class="home-container">
+  <!-- Header/Navegação -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <h1>Una Outdoor</h1>
+      </div>
+      <!-- Navegação para Desktop -->
+      <nav class="nav-desktop">
+        <app-login-menu></app-login-menu>
+        <button type="button" class="theme-toggle" (click)="toggleTheme()" [attr.aria-pressed]="isDark" aria-label="Alternar tema">
+          <span *ngIf="isDark">☀️</span>
+          <span *ngIf="!isDark">🌙</span>
+        </button>
+      </nav>
+      <!-- Botão do Menu Mobile -->
+      <button class="mobile-menu-toggle" (click)="toggleMenu()" aria-label="Abrir menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+    <!-- Menu Mobile (Dropdown) -->
+    <nav class="nav-mobile" [class.is-open]="isMenuOpen">
+      <app-login-menu></app-login-menu>
+    </nav>
+  </header>
+
+  <!-- Banner Principal -->
+  <section class="hero-section" [style.background-image]="'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(\'assets/images/imagem logo.png\')'">
+    <div class="hero-content">
+      <h1>Comunicação Visual de Alto Impacto</h1>
+      <p>Sua mensagem em evidência com as melhores soluções em mídia exterior</p>
+      <div class="cta-buttons">
+        <a routerLink="/orcamento" class="cta-primary">Solicitar Orçamento</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nova Seção de Localização (Estilo UX) -->
+  <section class="location-section">
+    <div class="location-content">
+      <div class="map-container-round">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3729.336594254634!2d-48.5624437!3d-20.5720738!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94bb9ab2c9596e6b%3A0x8429adc210e53318!2sUna!Outdoor%20e%20Comunica%C3%A7%C3%A3o%20Visual%20Barretos!5e0!3m2!1spt-BR!2sbr!4v1678886400000!5m2!1spt-BR!2sbr"
+          width="100%"
+          height="100%"
+          style="border:0;"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+      <div class="location-info">
+        <h2>Venha nos Visitar</h2>
+        <p>Estamos prontos para te receber e apresentar as melhores soluções em comunicação visual para o seu negócio.</p>
+        <div class="address">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>R. Vinte, 2469 - Marieta, Barretos - SP, 14783-238</span>
+        </div>
+        <a href="https://www.google.com/maps/place/Una!Outdoor+e+Comunica%C3%A7%C3%A3o+Visual+Barretos/@-20.5720738,-48.5624437,17z/data=!3m1!4b1!4m6!3m5!1s0x94bb9ab2c9596e6b:0x8429adc210e53318!8m2!3d-20.5720788!4d-48.5598634!16s%2Fg%2F11clvqtv_7?entry=ttu" target="_blank" class="cta-secondary">Ver no Google Maps</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção de Destaques -->
+  <section class="features-section">
+    <h2>Nossos Serviços</h2>
+    <div class="features-grid">
+      <div class="feature-card animate-on-scroll" *ngFor="let destaque of destaques">
+        <div class="feature-image">
+          <img [src]="destaque.imagem" [alt]="destaque.titulo">
+        </div>
+        <h3>{{destaque.titulo}}</h3>
+        <p>{{destaque.descricao}}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção Por Que Nos Escolher -->
+  <section class="why-us-section">
+    <h2>Por Que Nos Escolher</h2>
+    <div class="why-us-grid">
+      <div class="why-us-item animate-on-scroll">
+        <i class="fas fa-check-circle"></i>
+        <h3>Qualidade Garantida</h3>
+        <p>Materiais de primeira linha e impressão em alta resolução</p>
+      </div>
+      <div class="why-us-item animate-on-scroll">
+        <i class="fas fa-clock"></i>
+        <h3>Entrega no Prazo</h3>
+        <p>Comprometimento com prazos e cronogramas</p>
+      </div>
+      <div class="why-us-item animate-on-scroll">
+        <i class="fas fa-star"></i>
+        <h3>Atendimento Premium</h3>
+        <p>Suporte personalizado em todas as etapas</p>
+      </div>
+      <div class="why-us-item animate-on-scroll">
+        <i class="fas fa-lightbulb"></i>
+        <h3>Soluções Criativas</h3>
+        <p>Desenvolvemos projetos personalizados para sua necessidade</p>
+      </div>
+      <div class="why-us-item animate-on-scroll">
+        <i class="fas fa-bullseye"></i>
+        <h3>Visibilidade Estratégica</h3>
+        <p>Pontos de outdoor selecionados para máximo alcance e impacto.</p>
+      </div>
+      <div class="why-us-item animate-on-scroll">
+        <i class="fas fa-trophy"></i>
+        <h3>Experiência de Mercado</h3>
+        <p>Anos de atuação e conhecimento para o sucesso da sua campanha.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção de Parceiros -->
+  <section class="parceiros-section">
+    <h2>Nossos Parceiros</h2>
+    <div class="parceiros-carousel" #parceirosCarousel>
+      <div class="parceiros-carousel-inner">
+        <div class="parceiro-card" *ngFor="let parceiro of parceiros">
+          <img [src]="parceiro.logo" [alt]="parceiro.nome">
+        </div>
+        <div class="parceiro-card" *ngFor="let parceiro of parceiros">
+          <img [src]="parceiro.logo" [alt]="parceiro.nome">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>Institucional</h3>
+        <ul>
+          <a routerLink="/login">Área Administrativa</a>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Atendimento</h3>
+        <ul>
+          <li>(17) 98188-2373 (WhatsApp)</li>
+          <li>9h as 18h de Seg. a Sexta</li>
+          <li>unabarretos@gmail.com</li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Redes Sociais</h3>
+        <ul>
+          <li><a href="https://www.instagram.com/unaoutdoor_barretos/" target="_blank">Instagram</a></li>
+          <li><a href="https://www.facebook.com/unaoutdoorecomunicacaovisual/" target="_blank">Facebook</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Localização</h3>
+        <li><a href="https://www.google.com/maps/place/Una!Outdoor+e+Comunica%C3%A7%C3%A3o+Visual+Barretos/@-20.5720738,-48.5624437,17z/data=!3m1!4b1!4m6!3m5!1s0x94bb9ab2c9596e6b:0x8429adc210e53318!8m2!3d-20.5720788!4d-48.5598634!16s%2Fg%2F11clvqtv_7?entry=ttu&g_ep=EgoyMDI1MTEwNC4xIKXMDSoASAFQAw%3D%3D" target="_blank">R. Vinte, 2469 - Marieta, Barretos - SP, CEP 14783-238</a></li>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Una Outdoor. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+</div>
+
+<!-- Botão Voltar ao Topo -->
+<button class="back-to-top" [class.show]="showBackToTop" (click)="scrollToTop()">
+  <i class="fas fa-arrow-up"></i>
+</button>
