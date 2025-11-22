@@ -2,8 +2,8 @@ import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from './src/app/services/auth.service';
-import { ThemeService } from './src/app/services/theme.service';
+import { AuthService } from './src/app/auth-folder/auth.service';
+import { ThemeService } from './src/app/auth-folder/theme.service';
 
 @Component({
   selector: 'app-login',
