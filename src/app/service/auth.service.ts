@@ -7,7 +7,6 @@ import { SUPABASE_CLIENT } from '../../lib/supabase/client';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private router = inject(Router);
-  // Correção: Usa a instância única definida no client.ts em vez de recriar
   private supabase = SUPABASE_CLIENT;
 
   constructor() {}
@@ -122,14 +121,15 @@ export class AuthService {
     }));
   }
 
+  // Método usado internamente ou por novos componentes (Observable)
   updatePassword(newPassword: string): Observable<any> {
     return from(this.supabase.auth.updateUser({ password: newPassword }));
   }
 
-  // FIX: Método adicionado para compatibilidade com o componente de recuperação de senha
-  updatePasswordByCpf(cpf: string, newPassword: string): Observable<any> {
-    // O Supabase usa a sessão ativa para atualizar a senha, o CPF é ignorado aqui
-    // mas mantemos o parâmetro para não quebrar a chamada do componente.
-    return this.updatePassword(newPassword);
+  // CORREÇÃO AQUI: Mudamos para async/Promise para seu componente antigo não quebrar
+  async updatePasswordByCpf(cpf: string, newPassword: string) {
+    // Retorna a Promise direta do Supabase, que contém { data, error }
+    // Isso permite que seu componente use 'await' e desestruture 'const { error } ='
+    return this.supabase.auth.updateUser({ password: newPassword });
   }
 }
