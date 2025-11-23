@@ -1,18 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, from, throwError } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Router } from '@angular/router';
-import { environment } from '../../environments/environment';
+import { SUPABASE_CLIENT } from '../../lib/supabase/client';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private router = inject(Router);
-  private supabase: SupabaseClient;
+  // Correção: Usa a instância única definida no client.ts em vez de recriar
+  private supabase = SUPABASE_CLIENT;
 
-  constructor() {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabaseAnonKey);
-  }
+  constructor() {}
 
   async signUpCliente(dadosCadastro: { email: string, password: string, nome: string, cpf: string, telefone: string }) {
     const { email, password, nome, cpf, telefone } = dadosCadastro;
@@ -36,8 +34,8 @@ export class AuthService {
 
   customerLogin(email: string, password: string) {
     return new Observable<any>((observer) => {
-      this.supabase.auth.signInWithPassword({ 
-        email, 
+      this.supabase.auth.signInWithPassword({
+        email,
         password,
       }).then(({ data, error }) => {
         if (error) {
@@ -126,5 +124,12 @@ export class AuthService {
 
   updatePassword(newPassword: string): Observable<any> {
     return from(this.supabase.auth.updateUser({ password: newPassword }));
+  }
+
+  // FIX: Método adicionado para compatibilidade com o componente de recuperação de senha
+  updatePasswordByCpf(cpf: string, newPassword: string): Observable<any> {
+    // O Supabase usa a sessão ativa para atualizar a senha, o CPF é ignorado aqui
+    // mas mantemos o parâmetro para não quebrar a chamada do componente.
+    return this.updatePassword(newPassword);
   }
 }

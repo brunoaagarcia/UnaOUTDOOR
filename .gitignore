@@ -39,7 +39,8 @@ testem.log
 
 # Environment files
 .env.local
-src/environments/environment.ts
+# A LINHA ABAIXO FOI COMENTADA PARA PERMITIR O DEPLOY NA VERCEL
+# src/environments/environment.ts
 
 # System files
 .DS_Store
